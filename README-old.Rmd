@@ -1,0 +1,82 @@
+---
+output: github_document
+---
+
+## WIP
+#### from rplumber.io
+
+Only one R script `plumber.R`
+
+### dir structure
+at whoIIproto/plumber directory, final structure is as follows, see next section to have this:
+```
+plumberTest$ tree -L 2
+├── README.md
+├── run.png
+├── server
+│   └── plumber.R           <== main plumber R script
+├── static
+│   ├── build               <== RectJS client side code which must be kept away from public
+|   ├── node_modules        <== npm managed modules and not checked into git
+│   ├── package.json        <== nmp main package manager config
+│   ├── package-lock.json   <== ignore this :)
+│   ├── public              <== all publicly exposed files (served by plumber)
+│   ├── README.md
+│   └── src                 <== RectJS client side code which must be kept away from public
+└── v0.png
+```
+
+
+### to run
+
+After cloning repo,
+
+```bash
+# run in RStudio with Ctl-Alt-Enter
+cd plumber/static
+npm install
+npm run build
+cp build/* -r public
+```
+
+Now you should have above dir scructure.
+
+You will then need R package plumber
+
+```{r, eval=FALSE}
+install.packages("plumber") #should install without issues at least on Ubuntu 16 & 18 did.
+library(plumber)
+
+# go to plumber/static directory to run plumber.R
+old_dir = setwd("plumber/static/") # if starting from repo root
+r = plumb("../server/plumber.R")
+r$run(port = 8000)
+# You should see:
+# Starting server to listen on port 8000
+# Running the swagger UI at http://127.0.0.1:8000/__swagger__/
+setwd(old_dir) # move back to original wd when done
+```
+
+This means that [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/) is now showing `region1.geojson`, served from the endpoint [`http://127.0.0.1:8000/json`](http://127.0.0.1:8000/json). 
+
+The endpoint itself [`http://127.0.0.1:8000/json`](http://127.0.0.1:8000/json) returns an `unboxedJSON` 
+using plumber's directives.
+
+![AccRA](v00.png?raw=true "Index.html")
+
+### curl examples
+
+```bash
+curl --data "a=4&b=6" "http://localhost:8000/sum"
+# 10
+```
+
+### to develop
+
+We have two separate development environment going on here. The `plumber` which deals with the server side and `react-create-app` aka CRA which manages the client side.
+
+Once in `plumber/static` directory you can run the CRA dev server by
+
+`$ npm start`
+
+You can continue editing the R code using the main project `whoIIproto.Rproj`.
