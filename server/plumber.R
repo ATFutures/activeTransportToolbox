@@ -84,21 +84,20 @@ cors <- function(res) {
 
 # API endpoints -----------------------------------------------------------
 #'
-#' @serializer unboxedJSON
 #' @get /api/minn
 #' @get /api/minn/
-getMinn <- function () {
-  return(minn_geoms)
+getMinn <- function (res) {
+  res$body <- minn_geoms
+  return(res)
 }
 
-#' @serializer unboxedJSON
 #' @get /api/flows/
 #' @get /api/flows
 #' @get /api/flows/<city>/
 #' @get /api/flows/<city>
 #' @get /api/flows/<city>/<flowType>/
 #' @get /api/flows/<city>/<flowType>
-getFlow <- function(limit = 0, city = 'accra', flowType = 'residential_bus') {
+getFlow <- function(res, limit = 0, city = 'accra', flowType = 'residential_bus') {
   error <- NULL
   cat(city, flowType)
   # TODO: reprocess flows with different limit value
@@ -116,13 +115,13 @@ getFlow <- function(limit = 0, city = 'accra', flowType = 'residential_bus') {
     return(list(error))
   }
   # now all tolower
-  return (flows[sprintf("%s_flow_foot_%s.rds", tolower(city), tolower(flowType))])
+  res$body <- flows[sprintf("%s_flow_foot_%s.rds", tolower(city), tolower(flowType))]
+  return (res)
 }
 
 #' Replicate the getRoads
 #' @param type of the road to apply the quietness factor to
 #' @param qfactor a number (typed) to use as Quietness Factor
-#' @serializer unboxedJSON
 #' @get /api/centrality/<roadType>/<qfactor:double>/
 #' @get /api/centrality/<roadType>/<qfactor:double>
 #' @get /api/centrality/<qfactor:double>/<roadType>/
@@ -133,7 +132,7 @@ getFlow <- function(limit = 0, city = 'accra', flowType = 'residential_bus') {
 #' @get /api/centrality/<roadType:character>
 #' @get /api/centrality/
 #' @get /api/centrality
-centrality <- function(qfactor = 1, roadType = "residential") {
+centrality <- function(res, qfactor = 1, roadType = "residential") {
   if(length(roadType) > 30 || !is.element(tolower(roadType), tolower(roadTypes))) {
     return(list(paste0("Road type: '", roadType, "' not found.")))
   }
@@ -152,13 +151,14 @@ centrality <- function(qfactor = 1, roadType = "residential") {
   roads <- roads[c("highway", "lwd")]
   # roads <- roads[w > 100, ]
   geoms <- geojsonio::geojson_json(roads)
+  res$body <- geoms
+  return(res)
   # return(geoms)
 }
 
 #' TODO: this will be deleted so may not need to load into mem
-#' @serializer unboxedJSON
 #' @get /json
-function(){
+function(res){
   # json_data <- fromJSON(paste(readLines("../../region1.geojson"), collapse=""))
   # return(json_data)
   dirloc <- file.path(here::here(), "who-data", "accra", "osm")
@@ -174,8 +174,9 @@ function(){
   bldns_poly <- bldns$osm_polygons
   bldns <- bldns_poly[region, ]
   geoms <- geojsonio::geojson_json(bldns[1:50, 1:2])[[1]]
+  res$body <- geoms
   # cat(geoms)
-  return(geoms)
+  return(res)
 }
 
 # Filters -----------------------------------------------------------------
@@ -212,7 +213,7 @@ function(req){
 #' @get /pollution
 #' @get /pollution/
 routesAllowed <- function(req, res){
-  cat(req$PATH_INFO)
+  # cat(req$PATH_INFO)
   fname <- file.path(here::here(), "static", "public", "index.html")
   plumber::include_html(fname, res)
 }

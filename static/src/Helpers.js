@@ -66,10 +66,10 @@ const fetchData = (url, callback) => {
     fetch(url) // [0] => "", [1] => roads and [2] => qfactor
         .then((response) => response.json())
         .then((responseJson) => {
-            try {
-                const json = JSON.parse(responseJson);
+            try {                
+                // const json = JSON.parse(responseJson);
                 // console.log(json);
-                callback(json)
+                callback(responseJson)
             } catch (e) {
                 callback(null, e)
                 // console.log("invalid json")
@@ -104,7 +104,8 @@ const fetchCentralityData = (path, url, callback) => {
             const typeAndfactor = separateAPIParams(path);
             try {
                 callback({
-                    geodata: JSON.parse(responseJson),
+                    // geodata: JSON.parse(responseJson),
+                    geodata: responseJson,
                     qFactorTitle: typeAndfactor.qFactor, //could be either
                     roadSelected: typeAndfactor.rType
                 })
