@@ -13,7 +13,8 @@
    potential places of employment (buildings with other than exclusive
    residential purpose).
 
-The final two of these currently take a long time to calculate (just getting
-results for the moment; efficiency will come later). They respectively represent
+The final two of these currently take a long time to calculate. They respectively represent
 effective first mile and last mile pedestrian journeys make to connect with the
 bus system.
+
+Please see `data-intermediate` folder for full flow files for both Accra and Kathmandu.
