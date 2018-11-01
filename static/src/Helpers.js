@@ -189,10 +189,19 @@ const generateCrashLayer = (map, callback) => {
         callback({ crashMarkers, legend });
     })
 }
+const convertRange = (oldValue = 2, values = {oldMax: 10, oldMin: 1,
+    newMax: 1, newMin: 0}) => {
+        // thanks to https://stackoverflow.com/a/929107/2332101
+        // OldRange = (OldMax - OldMin)  
+        // NewRange = (NewMax - NewMin)  
+        // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+        return (((oldValue - values.oldMin) * (values.newMax - values.newMin)) / (values.oldMax - values.oldMin)) + values.newMin
+}
 
 export {
     fetchData,
     getCentroid,
+    convertRange,
     generateLegend,
     separateAPIParams,
     generateCrashLayer,

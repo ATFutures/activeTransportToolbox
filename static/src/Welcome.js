@@ -14,6 +14,7 @@ import TilesBasemap from './components/TilesBasemap';
 import LayersLegend from './components/LayersLegend';
 
 import {
+    convertRange,
     fetchData, generateCrashLayer, getCentroid,
     getResultsFromGoogleMaps, getParamsFromSearch
 } from './Helpers';
@@ -190,6 +191,8 @@ export default class Welcome extends Component {
                 maxFlow = aFlow;
             return null;// suppress warning
         });
+        const ranges = {oldMax: maxFlow, oldMin: 0,
+            newMax: 100, newMin: 0}
         newFlow =
             layerToDraw.features.map((feature, i) => {
                 // const way_id = feature.properties.way_id;
@@ -216,8 +219,9 @@ export default class Welcome extends Component {
                     fillColor: '#2262CC'
                 };
                 const defaultStyle = {
-                    weight: parseFloat(weight.toFixed(4)),
+                    weight: parseFloat(weight.toFixed(4)) + 2,
                     //hsl support https://caniuse.com/#feat=css3-colors
+                    // color: `hsl(${hue > 360 ? hue/360 : hue},${convertRange(weight, ranges)}%,50%)`
                     color: `hsl(${hue > 360 ? hue/360 : hue},${weight*10 > 100 ? 100 : weight*10}%,${50}%)`
                 }
                 return (
@@ -227,8 +231,8 @@ export default class Welcome extends Component {
                         data={feature} onEachFeature={(feature, layer) => {
                             feature.properties && feature.properties.flow &&
                                 layer.bindPopup(
-                                    fromTo ? "Flow: " + fromTo : ("" + //todo: which?  
-                                        "<br/>Density: " + feature.properties.flow)
+                                    "Flow: " + fromTo + //todo: which?  
+                                        "<br/>Density: " + parseFloat(weight.toFixed(4))
                                 );
                                 layer.on("mouseover", function (e) {
                                     // Change the style to the highlighted version
