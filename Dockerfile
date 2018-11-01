@@ -26,7 +26,7 @@ RUN apt-get update \
     protobuf-compiler \ 
     git
 
-RUN R -e 'install.packages(c("igraph", "sf", "geojsonio", "stplanr", \
+RUN R -e 'install.packages(c("igraph", "sf", "geojsonsf", "stplanr", \
         "devtools", "here", "rbenchmark", "RcppParallel", "osmdata", "sp"), \
         dependencies=T); \
         devtools::install_github("trestletech/plumber")'

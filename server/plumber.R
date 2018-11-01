@@ -1,4 +1,4 @@
-packages <- c("V8", "dodgr", "here", "igraph", "sf", "geojsonio", "stplanr")
+packages <- c("V8", "dodgr", "here", "igraph", "sf", "geojsonsf", "stplanr")
 
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())),repos='http://cran.us.r-project.org')  
@@ -15,7 +15,7 @@ processRDS <- function(filename) {
   g <- g[g$flow > (limit = 1e-5 * max (g$flow)), ]
   g <- g[c("highway","flow", "way_id")]
   print("Converting it to json...")
-  g_flow_accra_rbgeoms <- geojsonio::geojson_json(g)[[1]]
+  g_flow_accra_rbgeoms <- geojsonsf::sf_geojson(g)[[1]]
 }
 
 # import shared JS code ---------------------------------------------------
@@ -57,7 +57,7 @@ roads_sn <- stplanr::SpatialLinesNetwork(roads)
 # Minnesota data
 print("Minnesota data")
 trips <- readRDS(file.path(here::here(), "data-intermediate", "minnesota_r_all.Rds"))
-minn_geoms <- geojsonio::geojson_json(trips)
+minn_geoms <- geojsonsf::sf_geojson(trips)
 
 #  From https://www.rplumber.io home page 16th May 2018
 print(here::here())
@@ -150,7 +150,7 @@ centrality <- function(res, qfactor = 1, roadType = "residential") {
   # tidy-up roads, remove unncessary columns to serve
   roads <- roads[c("highway", "lwd")]
   # roads <- roads[w > 100, ]
-  geoms <- geojsonio::geojson_json(roads)
+  geoms <- geojsonsf::sf_geojson(roads)
   res$body <- geoms
   return(res)
   # return(geoms)
@@ -173,7 +173,7 @@ function(res){
   # names(bldns)
   bldns_poly <- bldns$osm_polygons
   bldns <- bldns_poly[region, ]
-  geoms <- geojsonio::geojson_json(bldns[1:50, 1:2])[[1]]
+  geoms <- geojsonsf::sf_geojson(bldns[1:50, 1:2])[[1]]
   res$body <- geoms
   # cat(geoms)
   return(res)
