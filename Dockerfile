@@ -26,15 +26,23 @@ RUN apt-get update \
     protobuf-compiler \ 
     git
 
+RUN install2.r stringi
+RUN install2.r lubridate
+
 RUN R -e 'install.packages(c("igraph", "sf", "geojsonsf", "stplanr", \
         "devtools", "here", "rbenchmark", "RcppParallel", "osmdata", "sp"), \
         dependencies=T); \
         devtools::install_github("trestletech/plumber")'
 
 RUN git clone https://github.com/ATFutures/dodgr.git
+
+RUN R -e "devtools::load_all('/dodgr', export_all=F)"
+
+RUN R -e 'devtools::install_version("rgeos", version = "0.3-28")'
+
 ADD . /app
 
 EXPOSE 8000
 
-ENTRYPOINT ["R", "-e", "setwd('/app'); devtools::load_all('/dodgr', export_all=F); \
+ENTRYPOINT ["R", "-e", "setwd('/app'); \
  plumber::plumb(file.path(here::here(), 'server', 'plumber.R'))$run(host='0.0.0.0',port=8000)"]
