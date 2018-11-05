@@ -171,22 +171,7 @@ export default class Welcome extends Component {
 
         let maxFlow = 0;
         layerToDraw.features.map((feature) => {
-            // const way_id = feature.properties.way_id;
             let aFlow = feature.properties.flow;
-            //TODO: aggregation not done right see #62
-            // if (add || (add === null && !flows[index].visible)) {//add or unhide
-            //     if (currentAggregate.hasOwnProperty(way_id)) {
-            //         aFlow = currentAggregate[way_id] + aFlow;
-            //     }
-            // } else {//remove or hiding
-            //     if (currentAggregate.hasOwnProperty(way_id) &&
-            //         currentAggregate[way_id] - aFlow > 0) {
-            //         //subtract
-            //         aFlow = currentAggregate[way_id] - aFlow
-            //     }
-            // }
-            // newCurrentAggregate[way_id] = aFlow;
-            //maxFlow of all of the features
             if (aFlow > maxFlow)
                 maxFlow = aFlow;
             return null;// suppress warning
@@ -197,16 +182,6 @@ export default class Welcome extends Component {
             layerToDraw.features.map((feature, i) => {
                 // const way_id = feature.properties.way_id;
                 let aggregateFlow = feature.properties.flow;
-                // if(add || (add === null && !flows[index].visible)) { //add or unhide
-                //     if (currentAggregate.hasOwnProperty(way_id)) {
-                //         aggregateFlow = currentAggregate[way_id] + aggregateFlow;
-                //     }
-                // } else {//hide or remove
-                //     if (typeof(currentAggregate[way_id]) === 'number' && 
-                //     currentAggregate[way_id] - aggregateFlow > 0) {
-                //         aggregateFlow = currentAggregate[way_id] - aggregateFlow
-                //     }
-                // }
                 const weight = (aggregateFlow / maxFlow) * 10;
                 // if (weight > 0.0001) console.log("bbbg");
 
@@ -219,7 +194,7 @@ export default class Welcome extends Component {
                     fillColor: '#2262CC'
                 };
                 const defaultStyle = {
-                    weight: parseFloat(weight.toFixed(4)) + 2,
+                    weight: parseFloat(weight.toFixed(4)) + 1,
                     //hsl support https://caniuse.com/#feat=css3-colors
                     // color: `hsl(${hue > 360 ? hue/360 : hue},${convertRange(weight, ranges)}%,50%)`
                     color: `hsl(${hue > 360 ? hue/360 : hue},${weight*10 > 100 ? 100 : weight*10}%,${50}%)`
