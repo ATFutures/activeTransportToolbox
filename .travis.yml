@@ -5,5 +5,5 @@ language: r
 services:
   - docker
 
-before_install:
+after_success:
   - docker build -t att .
