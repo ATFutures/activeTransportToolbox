@@ -1,4 +1,5 @@
 
+[![Build Status](https://travis-ci.org/ATFutures/activeTransportToolbox.svg)](https://travis-ci.org/ATFutures/activeTransportToolbox)
 
 ## Project
 ---
