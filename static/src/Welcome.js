@@ -13,6 +13,7 @@ import ATTSidebar from './components/ATTSidebar';
 import TilesBasemap from './components/TilesBasemap';
 import LayersLegend from './components/LayersLegend';
 
+
 import {
     convertRange,
     fetchData, generateCrashLayer, getCentroid,
@@ -24,6 +25,9 @@ import Constants from './Constants';
 import './App.css';
 
 import regionGeoJSON from './region.json'
+
+// var d3Interpolate = require("d3-interpolate")
+// color: d3Interpolate.interpolateRgb(colorSet[fflow.length], "orange")(convertRange(weight, ranges))
 
 const url = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
 const colorSet = ["darkgreen", 'black', 'red', 'blue'];
@@ -177,7 +181,7 @@ export default class Welcome extends Component {
             return null;// suppress warning
         });
         const ranges = {oldMax: maxFlow, oldMin: 0,
-            newMax: 100, newMin: 0}
+            newMax: 1, newMin: 0}
         newFlow =
             layerToDraw.features.map((feature, i) => {
                 // const way_id = feature.properties.way_id;
@@ -194,7 +198,7 @@ export default class Welcome extends Component {
                     fillColor: '#2262CC'
                 };
                 const defaultStyle = {
-                    weight: parseFloat(weight.toFixed(4)) + 1,
+                    weight: parseFloat(weight.toFixed(3)),
                     //hsl support https://caniuse.com/#feat=css3-colors
                     // color: `hsl(${hue > 360 ? hue/360 : hue},${convertRange(weight, ranges)}%,50%)`
                     color: `hsl(${hue > 360 ? hue/360 : hue},${weight*10 > 100 ? 100 : weight*10}%,${50}%)`

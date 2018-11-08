@@ -10,9 +10,10 @@ lapply(packages, library, character.only = TRUE)
 processRDS <- function(filename) {
   print(sprintf("Loading %s ...", filename))
   f <- readRDS(filename)
-  g <- dodgr::dodgr_to_sf (dodgr::merge_directed_flows (f))
+  g <- dodgr::dodgr_to_sfc (dodgr::merge_directed_flows (f))
   g <- sf::st_sf (g$dat, geometry = g$geoms)
   g <- g[g$flow > (limit = 1e-5 * max (g$flow)), ]
+  g$flow <- round(g$flow, 3)
   g <- g[c("highway","flow", "way_id")]
   print("Converting it to json...")
   g_flow_accra_rbgeoms <- geojsonsf::sf_geojson(g)[[1]]
