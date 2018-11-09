@@ -38,7 +38,7 @@ export default class ATTSidebar extends Component {  // note we're extending Map
             // console.log(props.layersDrawn);
             //adjust the list
             let flowsRemaining = layersFullList;
-            props.layersDrawn.map((fromTo) => {
+            props.layersDrawn.forEach((fromTo) => {
                 //bus_residential
                 const readable_fromTo = fromTo.startsWith("bus_") ? fromTo.replace("bus_", "To ") : "From " + fromTo.replace("_bus", "")
                 const index = flowsRemaining.indexOf(readable_fromTo);                
@@ -202,7 +202,7 @@ export default class ATTSidebar extends Component {  // note we're extending Map
     }
 
     render() {
-        const { display, styles } = this.state;
+        const { display } = this.state;
         const isVisible = display === "block";
         return (
             <Control position="topright">

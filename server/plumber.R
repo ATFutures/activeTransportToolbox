@@ -14,9 +14,6 @@ processRDS <- function(filename) {
   g <- sf::st_sf (g$dat, geometry = g$geoms)
   # g <- g[g$flow > (limit = 1e-2 * max (g$flow)), ]
   g <- head(g[order(g$flow, decreasing = TRUE), ], n = 5e3)
-  cat(nrow(g))
-  
-  # g$flow <- round(g$flow, 3)
   g <- g[c("highway","flow", "way_id")]
   print("Converting it to json...")
   g_flow_accra_rbgeoms <- geojsonsf::sf_geojson(g)[[1]]

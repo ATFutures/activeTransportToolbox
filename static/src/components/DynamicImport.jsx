@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 //https://tylermcginnis.com/react-router-code-splitting/
 //we can further add our laoding spinner here.
 export default class DynamicImport extends Component {

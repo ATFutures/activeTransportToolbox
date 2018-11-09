@@ -26,30 +26,29 @@ import './App.css';
 
 import regionGeoJSON from './region.json'
 
-// var d3Interpolate = require("d3-interpolate")
-// color: d3Interpolate.interpolateRgb(colorSet[fflow.length], "orange")(convertRange(weight, ranges))
+var d3Interpolate = require("d3-interpolate")
 
 const url = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
 const colorSet = ["darkgreen", 'black', 'red', 'blue'];
 
 /**
  * Main component to show at / of the webapp.
- * 
+ *
  * The component shows how transport data can be consumed
  * by react from our 'plumber' powered API end points.
- * 
+ *
  * Able to show various flows (GeoJSON data) for the two
  * cities in this research. Accra and Kathmandu. The component
  * provides an unobstructive side panel to:
  * 1. switch between the two cities
  * 2. show layers of transport flow
  * 3. show some smaple crash data for "accra"
- * 
+ *
  * Also includes leaflet control buttons to
  * 1. toggle/remove the flow layers
  * 2. change base map tiles.
- * 
- * 
+ *
+ *
  */
 export default class Welcome extends Component {
     constructor(props) {
@@ -82,21 +81,21 @@ export default class Welcome extends Component {
     }
 
     _addCrashData(map) {
-        generateCrashLayer(map, ({ crashMarkers, legend }) => 
+        generateCrashLayer(map, ({ crashMarkers, legend }) =>
         this.setState({ crashMarkers, legend }));
-        
+
     }
 
     _fetchData(newCity, fromTo) {
         const fullURL = url + "/api/flows/" + newCity + "/" + (fromTo ? fromTo : "");
-        console.log("fetching..... " + fullURL);
+        // console.log("fetching..... " + fullURL);
         //spinner
         !this.state.loading && this.setState({ loading: true })
         //see plumber.R flowType = 'residential_bus'
         fetchData(fullURL, (data, error) => {
             if (!error) {
                 // console.log(data.features.length)
-                //find max first 
+                //find max first
                 this._updateStatForLayer(data, newCity, fromTo);
             } else {
                 this.setState({
@@ -114,7 +113,7 @@ export default class Welcome extends Component {
         flows.forEach((layer) => {
             if (layer.visible)++visibleCount; //before operand
         })
-        //not unhiding 
+        //not unhiding
         if (!add && visibleCount === 1 && flows[index].visible) {
             const editedFlows = flows;//hide layer
             editedFlows[index].visible = !flows[index].visible;
@@ -143,12 +142,12 @@ export default class Welcome extends Component {
 
     /**
      * TODO: add description
-     * 
-     * @param {object} data 
-     * @param {string} newCity 
-     * @param {string} fromTo 
-     * @param {boolean} add 
-     * @param {string|number} index 
+     *
+     * @param {object} data
+     * @param {string} newCity
+     * @param {string} fromTo
+     * @param {boolean} add
+     * @param {string|number} index
      */
     _generateFlowFor(data, newCity, fromTo, add = true, index) {
         const { flows, city, flowDirections } = this.state;
@@ -174,13 +173,16 @@ export default class Welcome extends Component {
         }
 
         let maxFlow = 0;
-        layerToDraw.features.map((feature) => {
+        let minFlow = 0;
+        layerToDraw.features.forEach((feature) => {
             let aFlow = feature.properties.flow;
             if (aFlow > maxFlow)
                 maxFlow = aFlow;
-            return null;// suppress warning
+            if (aFlow < minFlow || minFlow === 0)
+                minFlow = aFlow;
         });
-        const ranges = {oldMax: maxFlow, oldMin: 0,
+       
+        const ranges = {oldMax: maxFlow, oldMin: minFlow,
             newMax: 1, newMin: 0}
         newFlow =
             layerToDraw.features.map((feature, i) => {
@@ -191,18 +193,19 @@ export default class Welcome extends Component {
 
                 const key = i + "_" + newCity + "_" + (!fromTo ? newFlowDirections[index] : fromTo)
                     + "_" + (add === null ? flows[index].visible ? "v" : "h" : add === false ? "d" : "n")
-                const hue = add ? fflow.length * 120 : index * 120;
+                // const hue = add ? fflow.length * 120 : index * 120;
                 var highlightStyle = {
-                    color: '#2262CC', 
+                    color: '#2262CC',
                     fillOpacity: 0.65,
                     fillColor: '#2262CC'
                 };
+                // const colorTo = colorSet[flowDirections.length > 0 ? flowDirections.indexOf(this.state.flowDirection) : 0]
                 const defaultStyle = {
                     weight: parseFloat(weight.toFixed(3)),
                     //hsl support https://caniuse.com/#feat=css3-colors
-                    // color: `hsl(${hue > 360 ? hue/360 : hue},${convertRange(weight, ranges)}%,50%)`
-                    color: `hsl(${hue > 360 ? hue/360 : hue},${weight*10 > 100 ? 100 : weight*10}%,${50}%)`
-                }
+                    color: d3Interpolate.interpolateRgb("darkgreen")(convertRange(weight, ranges))
+                    // color: `hsl(${hue > 360 ? hue/360 : hue},${weight*10 > 100 ? 100 : weight*10}%,${50}%)`
+                }                               
                 return (
                     <GeoJSON
                         style={defaultStyle}
@@ -210,7 +213,7 @@ export default class Welcome extends Component {
                         data={feature} onEachFeature={(feature, layer) => {
                             feature.properties && feature.properties.flow &&
                                 layer.bindPopup(
-                                    "Flow: " + fromTo + //todo: which?  
+                                    "Flow: " + fromTo + //todo: which?
                                         "<br/>Density: " + parseFloat(weight.toFixed(4))
                                 );
                                 layer.on("mouseover", function (e) {
@@ -262,7 +265,7 @@ export default class Welcome extends Component {
             centrality, map, crashMarkers, legend } = this.state;
         let _zoom = zoom ? zoom : 13 //default
         // console.log(theFlow && theFlow.length);
-        
+
         return (
             <Map
                 drawControl={true}

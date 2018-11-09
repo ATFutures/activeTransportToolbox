@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, TileLayer, Circle, Tooltip, LayersControl } from 'react-leaflet';
+import { Map, TileLayer, Circle, Tooltip } from 'react-leaflet';
 import Control from 'react-leaflet-control';
 import Papa from 'papaparse';
 import { LineChart, CartesianGrid, Line, XAxis, YAxis, Label,
@@ -112,7 +112,7 @@ export default class Pollution extends React.Component {
     }
 
     render() {
-        const { monthsData, color, sourceURL, center, month, 
+        const { monthsData, sourceURL, center, month, 
             hoverCategory, hoverAQI, hoverDate } = this.state;
         if(!monthsData) return(null)
         
@@ -176,7 +176,7 @@ export default class Pollution extends React.Component {
                                 // console.log(event) //event.activeLabel
                                 let newHover, newCategory;
                                 theMonthData.forEach((line) => {
-                                    if(line['Date (LT)'] == event.activeLabel){
+                                    if(line['Date (LT)'] === event.activeLabel){
                                         newHover = line['AQI']
                                         newCategory = line['AQI Category']
                                     }

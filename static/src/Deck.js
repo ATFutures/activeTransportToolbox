@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import MapGL from 'react-map-gl';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
-import DeckGL from 'deck.gl';
+// import DeckGL from 'deck.gl';
 import * as turf from '@turf/turf'
 
 import { fetchData } from './Helpers';
