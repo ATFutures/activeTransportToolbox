@@ -225,6 +225,8 @@ function(req){
 #' @get /deck/
 #' @get /pollution
 #' @get /pollution/
+#' @get /exposure
+#' @get /exposure/
 routesAllowed <- function(req, res){
   # cat(req$PATH_INFO)
   fname <- file.path(here::here(), "static", "public", "index.html")
