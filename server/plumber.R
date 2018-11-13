@@ -84,6 +84,18 @@ cors <- function(res) {
 
 
 # API endpoints -----------------------------------------------------------
+
+#' serve exposure json file
+print("Exposure data")
+exposure <- readLines("data-intermediate/acitivity_bus_exposure.json")
+exposure <- paste(exposure, collapse = "")
+#' @get /api/exposure
+get_exposure <- function(res){
+  res$headers$`Content-type` <- "application/json"
+  res$body <- exposure
+  res
+}
+
 #'
 #' @get /api/minn
 #' @get /api/minn/
