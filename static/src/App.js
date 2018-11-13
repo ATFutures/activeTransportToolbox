@@ -6,7 +6,6 @@ import Roads from './Roads';
 import Header from './components/Header';
 import DynamicImport from './components/DynamicImport';
 import Pollution from './components/Pollution';
-import Exposure from './components/Exposure'
 
 import './App.css';
 
@@ -24,15 +23,15 @@ const Deck = (props) => (
   </DynamicImport>
 )
 
-// const Exposure = (props) => (
-//   <DynamicImport load={() => import('./components/Exposure')}>
-//     {
-//       (Component) => Component === null
-//       ? <div className="loader" style={{ zIndex: 999}} />
-//       : <Component {...props} />
-//     }
-//   </DynamicImport>
-// )
+const Exposure = (props) => (
+  <DynamicImport load={() => import('./components/Exposure')}>
+    {
+      (Component) => Component === null
+      ? <div className="loader" style={{ zIndex: 999}} />
+      : <Component {...props} />
+    }
+  </DynamicImport>
+)
 
 /**
  * Separate the Header and the main content.

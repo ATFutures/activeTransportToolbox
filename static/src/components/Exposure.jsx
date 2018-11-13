@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MapGL from 'react-map-gl';
+import MapGL, { Popup, NavigationControl } from 'react-map-gl';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
 // import DeckGL, {LineLayer} from 'deck.gl';
 
@@ -23,7 +23,7 @@ export default class Deck extends Component {
             latitude: 5.58,
             longitude: -0.18,
             zoom: 12,
-            // pitch: 55
+            pitch: 55
         },
         layers: []
     };
@@ -47,9 +47,9 @@ export default class Deck extends Component {
                     return(
                         {"type": "Feature",
                         "properties": {
-                            "flow": +(d.flow) + 2,
-                            "exposure": +(d.exposure) > 5 ? 5 : +(d.exposure),
-                            "color": [Math.sqrt(d.exposure), 140, 0]
+                            "flow": +(d.flow),
+                            "exposure": d.exposure,
+                            "color": [Math.sqrt(d.flow), 140, 0]
                         },
                         "geometry": {
                             "type": "LineString",
@@ -70,7 +70,8 @@ export default class Deck extends Component {
                 console.log(geojson);
                 
                 const alayer = {
-                    "id": "route",
+                    "id": "exposure",
+                    "interactive": true,
                     "type": "line",
                     "source": {
                         "type": "geojson",
@@ -85,7 +86,18 @@ export default class Deck extends Component {
                         "line-width": ['get', 'flow']
                     }
                 };
+                map.addControl(new NavigationControl(), "bottom-right")
                 map.addLayer(alayer);
+                map.on('click', (e) => {
+                    console.log(e);
+                    
+                    const coordinates = e.features[0].geometry.coordinate;
+                    const description = e.features[0].properties.exosure;            
+                    new Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(description)
+                        .addTo(map);
+                });
             } else {
                 //network error?
             }
@@ -104,7 +116,7 @@ export default class Deck extends Component {
                 {
                     ({ height, width }) =>
                         <MapGL
-                            onViewportChange={this._onViewportChange.bind(this)}
+                            mapStyle="mapbox://styles/mapbox/dark-v9"                            onViewportChange={this._onViewportChange.bind(this)}
                             height={height}
                             width={width}
                             {...this.state.viewport}

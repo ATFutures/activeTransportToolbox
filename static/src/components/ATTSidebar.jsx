@@ -71,7 +71,7 @@ export default class ATTSidebar extends Component {  // note we're extending Map
                                 toggleCentrality(!centrality) //starts with false
                             }
                         }}
-                    >Centrality (zoom 13 only for now)</Checkbox>
+                    >Centrality (zoom 9 to 14)</Checkbox>
                     <Checkbox
                         checked={crashes}
                         onChange={() => {
@@ -81,7 +81,7 @@ export default class ATTSidebar extends Component {  // note we're extending Map
                                 toggleCrashes(!crashes) //starts with false
                             }
                         }}
-                    >Crash data for ...</Checkbox>
+                    >Crash data (simulated)</Checkbox>
                     <Checkbox
                         checked={showRegion}
                         onChange={() => {

@@ -18,7 +18,12 @@ const navs = [
     {
         key: 3,
         to: "pollution",
-        title: "Pollution"
+        title: "Pollution (live)"
+    },
+    {
+        key: 4,
+        to: "exposure",
+        title: "Pollution (PM10, simulated)"
     }
 ];
 

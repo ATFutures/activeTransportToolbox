@@ -87,7 +87,7 @@ cors <- function(res) {
 
 #' serve exposure json file
 print("Exposure data")
-exposure <- readLines("data-intermediate/acitivity_bus_exposure.json")
+exposure <- readLines(file.path(here::here(), "data-intermediate", "top5k_aggregate_exposure.json"))
 exposure <- paste(exposure, collapse = "")
 #' @get /api/exposure
 get_exposure <- function(res){
