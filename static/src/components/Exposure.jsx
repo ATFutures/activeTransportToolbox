@@ -16,23 +16,27 @@ const url = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Consta
  * 
  */
 export default class Deck extends Component {
-    state = {
-        viewport: {
-            // latitude: 5.6037,
-            // longitude: -0.1870,
-            latitude: 5.58,
-            longitude: -0.18,
-            zoom: 12,
-            pitch: 55
-        },
-        layers: []
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            viewport: {
+                // latitude: 5.6037,
+                // longitude: -0.1870,
+                latitude: 5.58,
+                longitude: -0.2,
+                zoom: 12,
+                // pitch: 55
+            },
+            popup: null,
+            layers: []
+        };
+    }
     componentDidMount() {
         const map = this.reactMap.getMap();
         fetchData(url + "/api/exposure", (data, error) => {
             if(!error) {
-                console.log(data);
-                console.log(data[1]['from_lat'], data[1]['from_lon'])
+                // console.log(data);
+                // console.log(data[1]['from_lat'], data[1]['from_lon'])
                 // const lineLayer = new LineLayer({
                 //     id: 'line-layer',
                 //     data,
@@ -67,7 +71,7 @@ export default class Deck extends Component {
                     "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
                     "features": features
                 }
-                console.log(geojson);
+                // console.log(geojson);
                 
                 const alayer = {
                     "id": "exposure",
@@ -86,18 +90,7 @@ export default class Deck extends Component {
                         "line-width": ['get', 'flow']
                     }
                 };
-                map.addControl(new NavigationControl(), "bottom-right")
-                map.addLayer(alayer);
-                map.on('click', (e) => {
-                    console.log(e);
-                    
-                    const coordinates = e.features[0].geometry.coordinate;
-                    const description = e.features[0].properties.exosure;            
-                    new Popup()
-                        .setLngLat(coordinates)
-                        .setHTML(description)
-                        .addTo(map);
-                });
+                map.addLayer(alayer);               
             } else {
                 //network error?
             }
@@ -111,17 +104,57 @@ export default class Deck extends Component {
 
     render() {
         // console.log("render");
+        const { popup } = this.state;        
         return (
             <AutoSizer>
                 {
                     ({ height, width }) =>
                         <MapGL
+                            // key={height+width} //causes layer to disappear
                             mapStyle="mapbox://styles/mapbox/dark-v9"                            onViewportChange={this._onViewportChange.bind(this)}
                             height={height}
                             width={width}
                             {...this.state.viewport}
                             mapboxApiAccessToken={"pk.eyJ1IjoibGF5aWsiLCJhIjoiY2ppNXFndGNzMGtpaDNxbXNqd2Rqc3BqZyJ9.355os6YWhIKPVaSiX01QIA"}
-                            ref={(reactMap) => { this.reactMap = reactMap; }} >
+                            ref={(reactMap) => { this.reactMap = reactMap; }} 
+                            onClick={(e) => {
+                                // console.log(e);
+                                // const features = e.features
+                                // a feature of the layer in quetsion
+                                if(e.features && e.features[0] && e.features[0].source === 'exposure') {
+                                    const coordinates = e.features[0].geometry.coordinates;
+                                    const f = e.features[0].properties.flow;
+                                    const exp = e.features[0].properties.exposure;
+                                    // console.log(coordinates, description);
+                                    this.setState({
+                                        popup: {
+                                            latitude: coordinates[0][1],
+                                            longitude: coordinates[0][0], 
+                                            description: 
+                                            <table style={{fontSize: '1.2em'}}><tbody>
+                                                <tr><td>Exposure: &nbsp;</td><td>{exp}</td></tr><tr><td>Flow: &nbsp;</td><td>{f}</td></tr>
+                                            </tbody></table>
+                                        }
+                                    })
+                                }
+                            }}
+                            >
+                            {
+                                popup &&
+                                <Popup
+                                    key={popup.latitude + popup.longitude}
+                                    latitude={popup.latitude} 
+                                    longitude={popup.longitude} 
+                                    onClose={() => this.setState({popup: null})} 
+                                    anchor="top">
+                                    <div>{popup.description}</div>
+                                </Popup>
+                            }                            
+                            <div className="nav" style={{position: 'fixed', bottom: 0, right: 0}}>
+                                <NavigationControl
+                                onViewportChange={(viewport) => this.setState({viewport})}
+                                />
+                            </div>
                             {/* <DeckGL
                                 {...this.stateviewport}
                                 onViewportChange={this._onViewportChange.bind(this)} 
