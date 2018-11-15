@@ -3,10 +3,12 @@ import MapGL, { Popup, NavigationControl } from 'react-map-gl';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
 // import DeckGL, {LineLayer} from 'deck.gl';
 
-import { fetchData } from '../Helpers';
+import { convertRange, fetchData } from '../Helpers';
 import Constants from '../Constants';
 
 import '../App.css';
+
+var d3Interpolate = require("d3-interpolate")
 
 const url = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
 
@@ -47,13 +49,25 @@ export default class Deck extends Component {
                 //     getColor: [144, 140, 0],
                 //     // onHover: ({object}) => setTooltip(`${object.from.name} to ${object.to.name}`)
                 // });
+                let maxFlow = 0;
+                let minFlow = 0;
+                data.forEach((d) => {
+                    let aFlow = d.flow;
+                    if (aFlow > maxFlow)
+                        maxFlow = aFlow;
+                    if (aFlow < minFlow || minFlow === 0)
+                        minFlow = aFlow;
+                })
+                const ranges = {oldMax: maxFlow, oldMin: minFlow, newMax: 1, newMin: 0}               
                 const features = data.map((d) => {
+                    let rgb = d3Interpolate.interpolateRgb("green", "red")(convertRange(d.flow, ranges))
+                    rgb = rgb.replace("rgb(", "").replace(")", "").split(",")                    
                     return(
                         {"type": "Feature",
                         "properties": {
                             "flow": +(d.flow),
                             "exposure": d.exposure,
-                            "color": [Math.sqrt(d.flow), 140, 0]
+                            "color": [+(rgb[0]), +(rgb[1]), +(rgb[2])]
                         },
                         "geometry": {
                             "type": "LineString",
@@ -90,7 +104,7 @@ export default class Deck extends Component {
                         "line-width": ['get', 'flow']
                     }
                 };
-                map.addLayer(alayer);               
+                map.addLayer(alayer);
             } else {
                 //network error?
             }
