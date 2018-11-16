@@ -6,6 +6,9 @@ import { LineChart, CartesianGrid, Line, XAxis, YAxis, Label,
     Tooltip as ReTooltip } from 'recharts';
 
 import Constants from '../Constants';
+import { convertRange } from '../Helpers';
+
+var d3Interpolate = require("d3-interpolate")
 
 /**
  * Component to show US Embassy Kathmandu Air Quality Index (AQI).
@@ -117,23 +120,18 @@ export default class Pollution extends React.Component {
         if(!monthsData) return(null)
         
         const monthName = Constants.MONTH_NAME[month-1];
-        const theMonthData = monthsData['2018']['0' + month];
+        const theMonthData = monthsData['2018'][month <= 9 ? ('0' + month) : month];
         let max = 0, maxDate = 0, maxCategory = 0;
         if(theMonthData && theMonthData.hasOwnProperty('max')){
             max = theMonthData.max;
             maxDate = theMonthData.maxDate;
             maxCategory = theMonthData.maxCategory;
         }        
-        let h = 120;
         let val = max;
         if(hoverAQI) {
             val = hoverAQI;
         }
-        val > 300 ? h = 360 :
-        val > 200 ? h = h + val :
-        val > 120 ? h = 0 :
-        val > 100 ? h = h - val :
-        h = h + val
+        const ranges = {oldMax: max, oldMin: 70, newMax: 1, newMin: 0}               
 
         return (
             <Map
@@ -147,22 +145,22 @@ export default class Pollution extends React.Component {
                 <Circle
                     key={hoverDate ? hoverDate : maxDate}
                     center={center}
-                    fillColor={"hsl("+ h + ",100%,50%)"}
+                    fillColor={d3Interpolate.interpolateRgb("green", "red")(convertRange(val, ranges))}
                     radius={100} >
                     <Tooltip
                         key={hoverDate ? hoverDate : maxDate} 
                         direction='top' offset={[-8, -2]} opacity={1} permanent>
                         {
                             hoverAQI && hoverDate ? 
-                            <span>({hoverCategory})AQI on {hoverDate}: {hoverAQI} </span>
+                            <span><h4>({hoverCategory})AQI on {hoverDate}: {hoverAQI} </h4></span>
                             :
-                            <span>({maxCategory})Max AQI on {maxDate}: {max} </span>
+                            <span><h4>({maxCategory})Max AQI on {maxDate}: {max} </h4></span>
                         }
                     </Tooltip>
                 </Circle>
                 <Control position="bottomleft" >
                     <div style={{ backgroundColor: "lightgrey" }}>
-                        Shwoing AQI inded for {`${monthName} `} 2018. 
+                        <h4>Showing AQI values for {`${monthName} `} 2018. <a href={csvURL}>Source</a></h4>
                         <input 
                             id="typeinp" 
                             type="range" 
