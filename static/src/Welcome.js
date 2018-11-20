@@ -62,8 +62,8 @@ export default class Welcome extends Component {
             currentAggregate: {},
             theFlow: null,
             ...zoomAndCenter,
-            centrality: L.tileLayer(url + '/tiles/{z}/{x}/{y}.png',
-                { tms: true, zIndex: 5, opacity: 0.7, attribution: "" }),
+            // centrality: L.tileLayer(url + '/tiles/{z}/{x}/{y}.png',
+            //     { tms: true, zIndex: 5, opacity: 0.7, attribution: "" }),
             loading: true,
             baseURL: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             attribution: "&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
@@ -262,7 +262,7 @@ export default class Welcome extends Component {
     render() {
         let centroid = getCentroid(regionGeoJSON.features[0].geometry.coordinates[0]);
         const { loading, zoom, showRegion, theFlow, flows, center, city, flowDirections,
-            centrality, map, crashMarkers, legend } = this.state;
+            map, crashMarkers, legend } = this.state;
         let _zoom = zoom ? zoom : 13 //default
         // console.log(theFlow && theFlow.length);
 
@@ -329,16 +329,6 @@ export default class Welcome extends Component {
                                 legend.addTo(map);
                             }
                             map.setView(Constants["Accra_CENTER"], 13)
-                        }
-                    }}
-                    toggleCentrality={(toggle) => {
-                        if (toggle) {
-                            if (map.getZoom() !== 13) {
-                                alert("Data only available in zoom 13.")
-                            }
-                            centrality.addTo(map);
-                        } else {
-                            centrality.removeFrom(map);
                         }
                     }}
                     selectedValues={{ city: city }} // add all other fields

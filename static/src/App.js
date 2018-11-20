@@ -33,6 +33,16 @@ const Exposure = (props) => (
   </DynamicImport>
 )
 
+const About = (props) => (
+  <DynamicImport load={() => import('./components/About')}>
+    {
+      (Component) => Component === null
+      ? <div className="loader" style={{ zIndex: 999}} />
+      : <Component {...props} />
+    }
+  </DynamicImport>
+)
+
 /**
  * Separate the Header and the main content.
  * Up to this point we are still not using SSR
@@ -48,11 +58,7 @@ class App extends Component {
           <Route path="/deck" component={Deck} />
           <Route path="/exposure" component={Exposure} />
           <Route path="/roads" component={Roads} />
-          <Route path="/about" component={() =>
-            <div>
-              <p>Coming ... </p>
-            </div>
-          } />
+          <Route path="/about" component={About} />
         </Switch>
       </main>
     )

@@ -64,15 +64,6 @@ export default class ATTSidebar extends Component {  // note we're extending Map
             }}>
                 <FormGroup>
                     <Checkbox
-                        onChange={() => {
-                            const { toggleCentrality } = this.props;
-                            this.setState({ centrality: !centrality })
-                            if (toggleCentrality && typeof(toggleCentrality) === 'function') {
-                                toggleCentrality(!centrality) //starts with false
-                            }
-                        }}
-                    >Centrality (zoom 9 to 14)</Checkbox>
-                    <Checkbox
                         checked={crashes}
                         onChange={() => {
                             const { toggleCrashes } = this.props;
