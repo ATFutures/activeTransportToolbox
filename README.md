@@ -9,10 +9,9 @@ The Active Transport Toolbox (ATT) is a showcase of transport data analytics and
 
 ATT is developed using R package `plumber` and Flux architecture using ReactJS. It is a Dockerized application which can be used as one container. Currently under development and deployment/production for mass use will be using Docker swarm using a standard http server application such as standard Nginx container. The base image r-rocker/base.
 
-### Deployment at http://35.233.61.182
-The deployed instance at above IP is hosted by Google (GCP) and pulls the image hosted at [Dockerhub](https://hub.docker.com/r/layik/att/).
-
 #### Using Docker
+[Dockerhub image](https://hub.docker.com/r/layik/att/).
+
 To build:
 
 Clone the repo and change directory into it.
