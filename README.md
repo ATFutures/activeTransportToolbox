@@ -53,10 +53,10 @@ chmod +x run.sh
 ### API endpoints
 R package plumber is Swagger compliant, although it is not in use in this deployment. Currently these endpoints are in use:
 
-> http://35.233.61.182/api/centrality/<quietnessFactor: double>/<roadType>
+> http://domain.tld/api/centrality/<quietnessFactor: double>/<roadType>
 
 both optional parameters
-> http://35.233.61.182/api/flows/<city>
+> http://domain.tld/api/flows/<city>
 
 either 'accra' or 'kahtmandu' as parameters at the moment.
 
