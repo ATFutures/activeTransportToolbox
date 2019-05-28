@@ -10,8 +10,7 @@ lapply(packages, library, character.only = TRUE)
 processRDS <- function(filename) {
   print(sprintf("Loading %s ...", filename))
   f <- readRDS(filename)
-  g <- dodgr::dodgr_to_sfc (dodgr::merge_directed_flows (f))
-  g <- sf::st_sf (g$dat, geometry = g$geoms)
+  g <- dodgr::dodgr_to_sf (dodgr::merge_directed_flows (f))
   # g <- g[g$flow > (limit = 1e-2 * max (g$flow)), ]
   g <- head(g[order(g$flow, decreasing = TRUE), ], n = 5e3)
   g <- g[c("highway","flow", "way_id")]
